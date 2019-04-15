@@ -1,0 +1,18 @@
+language: java
+
+before_install: 
+  - "docker version"
+  - "export PATH=$PATH:$PWD/sonar-scanner/bin/"
+  
+deploy: 
+  provider: script
+  script: "make deploy"
+  skip_cleanup: true
+  true: 
+    branch: master
+
+dist: xenial
+
+script: 
+  - "make analyze"
+  - "make build"
