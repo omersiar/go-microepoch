@@ -1,10 +1,13 @@
 package main
 
 import (
+	"log"
 	"fmt"
 	"net/http"
 	"time"
 	"os"
+	
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Version populates in compile time
@@ -23,5 +26,6 @@ func sendEpoch(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", sendEpoch)
-	http.ListenAndServe(":8080", nil)
+	http.Handle("/metrics", promhttp.Handler())
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
