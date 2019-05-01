@@ -9,12 +9,12 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/omersiar/go-microepoch.svg) 
 [![Website](https://img.shields.io/website-up-down-green-red/http/epoch.bitadvise.com.svg)](http://epoch.bitadvise.com)
 
-# A complete DevOps cycle for Building and Deploying a Go Application to Kubernetes cluster.
-In this example we will focus on creating an elegant solution using several higher-level services/software to enable agile, automated development and delivery of a (minimal) microservice that lives on [Kubernetes (k8s)](https://kubernetes.io/) cluster. 
+# A complete DevOps cycle for a Go Application which lives on Kubernetes cluster.
+In this example we will focus on creating an elegant solution using several higher-level services/software which renders our application an agile, continuously integrated and delivered microservice that lives on [Kubernetes (k8s)](https://kubernetes.io/) cluster. 
 
 [![tBW1f.png](https://i.imgyukle.com/2019/03/04/tBW1f.png)](https://imgyukle.com/i/tBW1f)
 
-This article divided into four parts, as we start preliminary with simple code, it grows into something bigger (an auto scaled, revision controlled, containered, globally distributed microservice). There are nearly hundreds (even thousands when combined) of different ways to accomplish what we are doing here, so I am going to focus on providing mixture of approaches, methods rather than giving examples of command line arguments.
+As we start preliminary with simple code, it grows into something bigger **-an auto scaled, revision controlled, containered, globally distributed microservice-**. There are nearly hundreds (even thousands when combined) of different ways to accomplish what we are doing here, so I am going to focus on providing mixture of approaches, methods rather than giving examples of command line arguments.
 
 Let's begin.
 
@@ -55,7 +55,7 @@ JSON formatted text can be easily parsed by a machine even if it has minimal res
 </details>
 </p>
 
-A Unix timestamp microservice can be used in various cases, in this case we assume that we needed it for our [**TOTP** (Time-Based One-Time Password)](https://www.ietf.org/rfc/rfc6238.txt) services to work reliably. I chose Go Language because of [its exponential growth](https://blog.golang.org/8years) in popularity and of course for its deliverability. 
+A Unix timestamp microservice can be used in various cases, in this case we assume that we needed it for our [**TOTP** (Time-Based One-Time Password)](https://www.ietf.org/rfc/rfc6238.txt) services to work reliably. 
 
 <p>
 <details><summary><b>On TOTP</b></summary><br>
@@ -69,6 +69,8 @@ TOTP algorithm is widely used by 2-step authentication mechanisms (2FA, 2-step v
 </details>
 </p>
 
+I chose Go Language because of [its exponential growth](https://blog.golang.org/8years) in popularity and of course for its deliverability. 
+
 Go applications can be executed within incredibly small containers, once you link all the dependencies to the executable, you would not need Go runtimes to run your application, after all, Go is essentially designed for cloud computing.
 
 <p>
@@ -76,7 +78,7 @@ Go applications can be executed within incredibly small containers, once you lin
 
 ---
 
-Containerization term comes from logistics, means packaging payloads (goods) in a standardized way. With containerization we can make sure that the software can be transported anywhere regardless which runtime is going to consumes it (Kubernetes, Docker, LXD, containerd).
+Containerization term comes from logistics, means packaging payloads (goods) in a standardized way. With containerization we can make sure that the software can be transported anywhere regardless which runtime is going to consumes it (Docker, LXD, containerd, rkt).
 
 Docker is not the only containerization option but makes everyone's life **very... very...** easy thus we understand why it is so [popular](https://www.datadoghq.com/docker-adoption/).
 
@@ -102,7 +104,7 @@ Our go app does not take into account any time drifts (that may caused by networ
 Our go app is intended to be built on a Docker container ([golang](https://hub.docker.com/_/golang)), then compiled binary copied to Docker's empty ([scratch](https://hub.docker.com/_/scratch)) image in order to have a minimal Docker image to run.  
 
 <p>
-<details><summary><b>Our code going to be build in a container?</b></summary><br>
+<details><summary><b>Does it really going to be build in a container?</b></summary><br>
 
 ---
 
@@ -126,7 +128,7 @@ Also we need to serve our built Docker images so our Kubernetes cluster will abl
 Creating a private docker registry is relatively an easy task, just follow the [instructions here](https://docs.docker.com/registry/deploying/). While we are putting this example to reality, we omit some fundamental necessity for a Private Registry due to the sake of quickness - **Authentication**. [Docker Registry Authentication Specification](https://docs.docker.com/registry/spec/auth/token/) allows us to build variety of authentication mechanisms on top of it, companies should choose their corresponding authentication approach.
 
 <p>
-<details><summary><b>The Uber's Docker Registry - Kraken</b></summary><br>
+<details><summary><b>Kraken - Uber's Docker Registry</b></summary><br>
 
 ---
 
@@ -168,7 +170,7 @@ In this case our Continuous Integration / Delivery service is [Travis](https://t
 
 *(It could have been one of popular services/software like [Jenkins](https://jenkins.io/), [Bamboo](https://www.atlassian.com/software/bamboo) it would not change our workflow). (You may also use git's [post/pre commit hooks](https://www.atlassian.com/git/tutorials/git-hooks) for local automated builds).*
 
-Thanks to automated services we do not need any development environment for Go, one can simply push changes to the git repository (via WebIDE or even mobile phone) then it can be built by an automated Continuous Integration system, this enables us to work with virtually on any device and anywhere in the world.
+Thanks to automated services we do not need any development environment for our Go application, one can simply push changes to the git repository (via WebIDE or even mobile phone) then it can be built by an automated Continuous Integration system, this enables us to work with virtually on any device and anywhere in the world.
 
 <p align="center">
   <img src="https://i.imgyukle.com/2019/03/11/FvH30.png">
@@ -180,12 +182,10 @@ simplified workflow
 
 Our CI pipeline starts with a [.travis.yml](https://github.com/omersiar/go-microepoch/blob/master/.travis.yml) file, Travis uses this file in order to run our pipeline in a Virtual Machine. When a commit is pushed to the git repository, Travis boots up a Clean VM, prepares building environment and builds our Docker image and in the case of commit is pushed to "master" branch it also pushes image to our Docker Private Registry and finally rolls an update on the Kubernetes cluster.
 
-We use Travis' protected [repository variables](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) to pass our Kubernetes' service account tokens to the [Bash script](https://github.com/omersiar/go-microepoch/blob/master/kubeEnv.sh).
+We use Travis' secure, protected [repository variables](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) to pass our Kubernetes' service account tokens to the [Bash script](https://github.com/omersiar/go-microepoch/blob/master/kubeEnv.sh).
 
 ## Kubernetes
-[Certified Kubernetes Providers](https://kubernetes.io/partners/#conformance)
-
-Kubernetes cluster in this example is provided by [Google Cloud Platform](https://cloud.google.com/), again, it does not matter which cloud service you host your Kubernetes cluster on, either choose one of the best Kubernetes services provided by [Amazon Web Service](https://aws.amazon.com/) and [DigitalOcean](https://digitalocean.com/) or create your mini cluster with [minikube](https://github.com/kubernetes/minikube) locally.
+Kubernetes cluster in this example is provided by [Google Cloud Platform](https://cloud.google.com/), again, it does not matter which cloud service you host your Kubernetes cluster on, either choose one of the best [Certified Kubernetes Providers](https://kubernetes.io/partners/#conformance) like [Amazon's EKS ](https://aws.amazon.com/) and [DigitalOcean](https://digitalocean.com/) or create your mini cluster with [minikube](https://github.com/kubernetes/minikube) locally.
 
 Our Kubernetes cluster configuration is as below:
 
@@ -199,13 +199,17 @@ Our Kubernetes cluster configuration is as below:
 
 When we merge/push changes to "master" branch on our git repository, Travis tells Kubernetes cluster to change the application image via kubectl. Kubernetes then tries to roll out our new image to across its pods, thanks to Kubernetes internal workings there is no downtime introduced by an update (Kubernetes first creates new pods with updated image, then checks their health, if they are in good condition, it deletes previous pods and redirects traffic to the new pods), and our new version of Go Application will be on air in a few minutes without disrupting clients.
 
+### Deployment Types
+
+In this example we are using rolling update strategy to serve freshly coded application. New features that are coded by developers are tested on their explicit service without a split second downtime. Some industry best practices also available for application deployment like **Blue - Green Deployment** and **Canary Deployment**.
+
 Congratulations, now we can access our freshly updated microservice. Please notice that we have **"revision"** element on application's output, so it matches with the repository's latest SHA1 commit id (short type). You can also use reverse proxy service like [Cloudflare](https://www.cloudflare.com/) to access our microservice within a namespace (domain) or you can create a new "A" record on your DNS server.
 
 Click and check it out how cool it is:  
 
 http://epoch.bitadvise.com (Production, master branch)  
 
-http://test.epoch.bitadvise.com (Testing, staging branch)  
+http://test.epoch.bitadvise.com (Testing, staging branch)
 
 ### TODO
 - [ ] Write test for "Inspect the container to determine if it is really running"
