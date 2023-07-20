@@ -26,7 +26,7 @@ func sendEpoch(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
    reqCounter.Inc()
-   fmt.Fprintf(w, "{\"host\": %s, \"type\": \"epoch\", \"data\": %d, \"unit\": \"sec\", \"rev\": %q}", hostname, epoch, Version)
+   fmt.Fprintf(w, "{\"host\": \"%s\", \"type\": \"epoch\", \"data\": %d, \"unit\": \"sec\", \"rev\": %q}", hostname, epoch, Version)
 }
 
 func main() {
