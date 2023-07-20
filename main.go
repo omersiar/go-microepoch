@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+   "os"
    "github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -26,7 +27,7 @@ func sendEpoch(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-  prometheus.MustRegister(pingCounter)
+  prometheus.MustRegister(reqCounter)
   http.HandleFunc("/", sendEpoch)
   http.Handle("/metrics", promhttp.Handler())
   http.ListenAndServe(":8080", nil)
