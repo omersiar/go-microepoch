@@ -21,7 +21,10 @@ var reqCounter = prometheus.NewCounter(
 
 func sendEpoch(w http.ResponseWriter, r *http.Request) {
    epoch := time.Now().UTC().Unix()
-   hostname := os.Hostname()
+   hostname, err := os.Hostname()
+	if err != nil {
+		fmt.Println(err)
+	}
    reqCounter.Inc()
    fmt.Fprintf(w, "{\"host\": %s, \"type\": \"epoch\", \"data\": %d, \"unit\": \"sec\", \"rev\": %q}", hostname, epoch, Version)
 }
