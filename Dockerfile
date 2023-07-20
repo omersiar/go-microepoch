@@ -1,7 +1,7 @@
 # STEP 1 build executable binary
 
 # golang 1.20
-FROM golang:1.20.6 as builder
+FROM golang:1.20.6-alpine3.18 as builder
 
 # Install git, Git is required for fetching the dependencies.
 RUN apk update && apk add --no-cache git 
