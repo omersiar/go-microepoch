@@ -13,7 +13,7 @@ WORKDIR $GOPATH/src/mypackage/epoch/
 COPY . .
 
 # Fetch dependencies.
-RUN go get -d -v
+RUN go get github.com/prometheus/client_golang/prometheus github.com/prometheus/client_golang/prometheus/promhttp
 
 # Build the binary
 RUN GITREV=$(git rev-parse --short HEAD) && \
